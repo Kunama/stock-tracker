@@ -112,6 +112,7 @@ class App extends React.Component{
   }
   getStockInformation = (stock, day, startDate, endDate) => {
     // stock = "HD"
+    console.log(process.env)
     fetch("https://www.quandl.com/api/v3/datasets/EOD/"+stock+"?column_index=4&start_date=" + startDate + "&end_date="+endDate+"&api_key=" + process.env.REACT_APP_QUANDL_API_KEY)
     .then(response => response.json())
     .then(responseAsJson => {
