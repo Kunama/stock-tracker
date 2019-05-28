@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "name": "container-tracker",
+  "name": "stock-graph",
   "builds": [
     {
       "src": "package.json",
