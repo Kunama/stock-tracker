@@ -1,11 +1,20 @@
-import React from 'react';
+import React from "react";
 import {Chart} from "react-google-charts"
+import "./stylesheet.css"
+import Button from "@material-ui/core/Button"
+import 'date-fns';
+import TextField from "@material-ui/core/TextField" 
+import DateFnsUtils from '@date-io/date-fns'
+import {
+  MuiPickersUtilsProvider,
+  KeyboardDatePicker,
+} from '@material-ui/pickers';
 class StockForm extends React.Component{
   constructor(props){
     super(props)
     this.state = {
       stockInputValue: "",
-      dayInputValue: 0,
+      dayInputValue: "",
       startDateInputValue: null,
       endDateInputValue: null
 
@@ -19,16 +28,19 @@ class StockForm extends React.Component{
   handleDayInputChange = event => {
     this.setState({
       dayInputValue: event.target.value,
-    })
+    }) 
   }
   handleStartDateInputChange = event => {
+    // console.log(event)
+    // console.log(event.target)
+    // console.log(event.target.value)
     this.setState({
-      startDateInputValue: event.target.value,
+      startDateInputValue: event,
     })
   }
   handleEndDateInputChange = event => {
     this.setState({
-      endDateInputValue: event.target.value,
+      endDateInputValue: event,
     })
   }
   
@@ -54,13 +66,33 @@ class StockForm extends React.Component{
   render(){
     return(
       <form>
-        <input type="text" name="stock-input" value={this.state.stockInputValue} onChange={this.handleStockInputChange} placeholder="Stock Name"></input>
-        <input type="number" name="day-input" value={this.state.dayInputValue} onChange={this.handleDayInputChange}></input>
+        {/* <TextField type="number"/> */}
+        <TextField margin="normal" label="Stock Name" type="text" name="stock-input" value={this.state.stockInputValue} onChange={this.handleStockInputChange}></TextField>
+        <TextField margin="normal" label="X-Day Average" type="number" name="day-input" value={this.state.dayInputValue} onChange={this.handleDayInputChange}></TextField>
+        <MuiPickersUtilsProvider utils={DateFnsUtils}>
+        <KeyboardDatePicker
+          // type="date"
+          margin="normal"
+          label="Start Date"
+          value={this.state.startDateInputValue}
+          onChange={this.handleStartDateInputChange}
+        />
 
-        <input type="date" name="start-date-input" value={this.state.startDateInputValue} onChange={this.handleStartDateInputChange}></input>
-        <input type="date" name="end-date-input" value={this.state.endDateInputValue} onChange={this.handleEndDateInputChange}></input>
+        <KeyboardDatePicker
+          margin="normal"
+          label="End Date"
+          value={this.state.endDateInputValue}
+          onChange={this.handleEndDateInputChange}
+        />
+        {/* </MuiPickersUtilsProvider> */}
+        </MuiPickersUtilsProvider>
+        {/* <TextField type="date" name="start-date-input" value={this.state.startDateInputValue} onChange={this.handleStartDateInputChange}></TextField> */}
+        {/* <TextField type="date" name="end-date-input" value={this.state.endDateInputValue} onChange={this.handleEndDateInputChange}></TextField> */}
 
-        <input type="submit" value="Get Stock Data" onClick={this.handleFormSubmit}></input>
+        {/* <input type="submit" value="Get Stock Data" onClick={this.handleFormSubmit}></input> */}
+        <Button type="submit" variant="contained" color="primary" onClick={this.handleFormSubmit}>
+      Submit
+    </Button>
       </form>
     )
   }
@@ -112,10 +144,17 @@ class App extends React.Component{
   }
   getStockInformation = (stock, day, startDate, endDate) => {
     // stock = "HD"
-    console.log(process.env)
+    // console.log(process.env)
     fetch("https://www.quandl.com/api/v3/datasets/EOD/"+stock+"?column_index=4&start_date=" + startDate + "&end_date="+endDate+"&api_key=" + process.env.REACT_APP_QUANDL_API_KEY)
     .then(response => response.json())
     .then(responseAsJson => {
+      // console.log(responseAsJson.dataset)
+      // console.log(responseAsJson.dataset.data)
+      // console.log(responseAsJson.dataset.data.length)
+      if(responseAsJson.dataset.data.length === 0 || responseAsJson.dataset.data.length===1){
+        alert("Not enough data for this stock and date range combo")
+        return
+      }
       // console.log(responseAsJson.dataset.data)
       // let data = [["Date", "Price"]]
       let data = responseAsJson.dataset.data
