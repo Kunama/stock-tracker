@@ -1,0 +1,13 @@
+{
+  "version": 2,
+  "name": "container-tracker",
+  "builds": [
+    {
+      "src": "package.json",
+      "use": "@now/static-build",
+      "config": {
+        "distDir": "build"
+      }
+    }
+  ]
+}
